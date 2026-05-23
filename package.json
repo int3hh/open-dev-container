@@ -1,0 +1,172 @@
+{
+  "name": "open-dev-container",
+  "displayName": "Open Dev Container",
+  "description": "Open running Docker containers as development workspaces through Remote SSH.",
+  "version": "0.0.1",
+  "publisher": "void",
+  "license": "MIT",
+  "icon": "resources/open-dev-container.png",
+  "engines": {
+    "vscode": "^1.92.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "open",
+    "docker",
+    "container",
+    "devcontainer",
+    "remote"
+  ],
+  "activationEvents": [
+    "onView:openDevContainer.containersView",
+    "onCommand:open-dev-container.attachRunningContainer",
+    "onCommand:open-dev-container.reconnectConnection",
+    "onCommand:open-dev-container.disconnectConnection",
+    "onCommand:open-dev-container.cleanSshConfig",
+    "onCommand:open-dev-container.refreshContainers"
+  ],
+  "main": "./out/extension.js",
+  "extensionKind": [
+    "ui"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "openDevContainer",
+          "title": "Open Dev Container",
+          "icon": "resources/open-dev-container.svg"
+        }
+      ]
+    },
+    "views": {
+      "openDevContainer": [
+        {
+          "id": "openDevContainer.containersView",
+          "name": "Containers"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "open-dev-container.attachRunningContainer",
+        "title": "Attach to Running Container",
+        "category": "Open Dev Container",
+        "icon": "$(remote)"
+      },
+      {
+        "command": "open-dev-container.reconnectConnection",
+        "title": "Reconnect Last Connection",
+        "category": "Open Dev Container",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "open-dev-container.disconnectConnection",
+        "title": "Disconnect Connection",
+        "category": "Open Dev Container",
+        "icon": "$(close)"
+      },
+      {
+        "command": "open-dev-container.cleanSshConfig",
+        "title": "Clean SSH Config",
+        "category": "Open Dev Container",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "open-dev-container.refreshContainers",
+        "title": "Refresh Containers",
+        "category": "Open Dev Container",
+        "icon": "$(refresh)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "open-dev-container.refreshContainers",
+          "when": "view == openDevContainer.containersView",
+          "group": "navigation"
+        },
+        {
+          "command": "open-dev-container.cleanSshConfig",
+          "when": "view == openDevContainer.containersView",
+          "group": "navigation@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "open-dev-container.attachRunningContainer",
+          "when": "view == openDevContainer.containersView && viewItem == open-dev-container-container",
+          "group": "navigation"
+        },
+        {
+          "command": "open-dev-container.reconnectConnection",
+          "when": "view == openDevContainer.containersView && viewItem == open-dev-container-recent",
+          "group": "navigation"
+        },
+        {
+          "command": "open-dev-container.disconnectConnection",
+          "when": "view == openDevContainer.containersView && viewItem == open-dev-container-recent",
+          "group": "navigation@2"
+        },
+        {
+          "command": "open-dev-container.cleanSshConfig",
+          "when": "view == openDevContainer.containersView && viewItem == open-dev-container-recent",
+          "group": "navigation@3"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Open Dev Container",
+      "properties": {
+        "openDevContainer.dockerPath": {
+          "type": "string",
+          "default": "docker",
+          "description": "Docker CLI executable used by this extension."
+        },
+        "openDevContainer.remoteUser": {
+          "type": "string",
+          "default": "root",
+          "description": "User Remote SSH should log in as inside the container."
+        },
+        "openDevContainer.workspaceFolder": {
+          "type": "string",
+          "default": "",
+          "description": "Container path to open after attach. When empty, the extension maps the current local workspace through Docker bind mounts."
+        },
+        "openDevContainer.installSshd": {
+          "type": "boolean",
+          "default": true,
+          "description": "Try to install openssh-server in the container when sshd is missing."
+        },
+        "openDevContainer.openInNewWindow": {
+          "type": "boolean",
+          "default": true,
+          "description": "Open the attached container in a new editor window."
+        },
+        "openDevContainer.sshConfigPath": {
+          "type": "string",
+          "default": "",
+          "description": "SSH config path to update. Empty means ~/.ssh/config."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "test": "npm run compile && node --test test/*.test.js",
+    "watch": "tsc -watch -p ./",
+    "package": "bash ./infra.sh pack",
+    "lib_update": "bash ./infra.sh lib_update",
+    "build": "bash ./infra.sh build",
+    "pack": "bash ./infra.sh pack"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/vscode": "^1.92.0",
+    "@vscode/vsce": "^3.6.0",
+    "sharp": "^0.34.5",
+    "typescript": "^5.9.0"
+  }
+}
