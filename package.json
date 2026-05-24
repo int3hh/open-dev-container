@@ -1,8 +1,8 @@
 {
   "name": "open-dev-container",
   "displayName": "Open Dev Container",
-  "description": "Open running Docker containers as development workspaces through Remote SSH.",
-  "version": "0.0.2",
+  "description": "Open running Docker containers as development workspaces via Remote SSH. Supports VS Code-compatible editors such as Trae CN.",
+  "version": "0.0.3",
   "publisher": "Zwhy2025",
   "license": "MIT",
   "icon": "resources/open-dev-container.png",

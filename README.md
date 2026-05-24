@@ -1,11 +1,13 @@
 # Open Dev Container
 
-Open Dev Container 让支持 Remote SSH 的 VS Code 兼容编辑器，把正在运行的 Docker 容器作为开发工作区打开。常用功能为`Attach to Running Container`，连接过程本质上是将以下步骤自动化掉：
+Open Dev Container 让支持 Remote SSH 的 VS Code Compatible Editor，把正在运行的 Docker 容器作为开发工作区打开。目前已支持 Trae CN，理论上兼容所有支持 Remote SSH 的 VS Code Compatible Editor。常用功能为`Attach to Running Container`，连接过程本质上是将以下步骤自动化掉：
 
 1. 选择一个正在运行的容器。
 2. 在容器内准备 SSH 访问能力。
 3. 在本机 SSH config 写入受管理的 Host 配置块。
 4. 通过 `vscode-remote://ssh-remote+...` 打开容器内工作区。
+
+GitHub 仓库：[https://github.com/Zwhy2025/open-dev-container ](https://github.com/Zwhy2025/open-dev-container)
 
 ## 主要能力
 
