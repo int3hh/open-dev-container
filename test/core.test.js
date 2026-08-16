@@ -29,9 +29,24 @@ test('parseDockerContainerList parses docker JSON lines', () => {
   assert.equal(containers[1].Image, 'redis');
 });
 
+test('parseDockerContainerList normalizes podman container output', () => {
+  const containers = parseDockerContainerList(
+    '{"Id":"8c5872883dfd","Image":"docker.io/library/archlinux:latest","Names":["archi"],"State":"running","Status":""}'
+  );
+
+  assert.equal(containers.length, 1);
+  assert.equal(containers[0].ID, '8c5872883dfd');
+  assert.equal(containers[0].Names, 'archi');
+  assert.equal(containers[0].Status, 'running');
+});
+
 test('parseDockerContainerList reports invalid docker output', () => {
   assert.throws(
     () => parseDockerContainerList('not json'),
+    (error) => error instanceof OpenDevContainerError && error.code === 'DOCKER_OUTPUT_PARSE_FAILED'
+  );
+  assert.throws(
+    () => parseDockerContainerList('{"Image":"node:22","Names":["app"],"State":"running"}'),
     (error) => error instanceof OpenDevContainerError && error.code === 'DOCKER_OUTPUT_PARSE_FAILED'
   );
 });
