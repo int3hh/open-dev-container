@@ -90,6 +90,8 @@ if ! command -v sshd >/dev/null 2>&1 && [ ! -x /usr/sbin/sshd ]; then
     yum install -y openssh-server
   elif command -v microdnf >/dev/null 2>&1; then
     microdnf install -y openssh-server
+  elif command -v pacman >/dev/null 2>&1; then
+    pacman -Sy --noconfirm openssh
   else
     echo "OPEN_DEV_CONTAINER_ERROR=NO_PACKAGE_MANAGER" >&2
     echo "openssh-server is missing and no supported package manager was found." >&2

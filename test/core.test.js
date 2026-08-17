@@ -163,6 +163,7 @@ test('RecentConnectionStore filters invalid records, sorts, deduplicates, and re
 
 test('buildPrepareSshdScript includes install and no-install failure paths', () => {
   assert.match(buildPrepareSshdScript('root', 'ssh-ed25519 AAA test', true), /apt-get install -y openssh-server/);
+  assert.match(buildPrepareSshdScript('root', 'ssh-ed25519 AAA test', true), /pacman -Sy --noconfirm openssh/);
   assert.match(buildPrepareSshdScript('root', 'ssh-ed25519 AAA test', false), /OPEN_DEV_CONTAINER_ERROR=MISSING_SSHD/);
 });
 
