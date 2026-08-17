@@ -199,3 +199,12 @@ class MemoryStorage {
     this.value = value;
   }
 }
+
+test('buildPrepareSshdScript force command exits with the command instead of lingering', () => {
+  const script = buildPrepareSshdScript('root', 'ssh-ed25519 AAAA test', false);
+  const forceCommand = script.match(/<<'EOF'\n([\s\S]*?)\nEOF/)[1];
+  // open-remote-ssh resolves exec() only when the channel closes; a lingering
+  // session (the old `while :; do sleep 3600; done`) hangs the connection.
+  assert.doesNotMatch(forceCommand, /sleep 3600/);
+  assert.match(forceCommand, /exec sh -lc "\$SSH_ORIGINAL_COMMAND"/);
+});

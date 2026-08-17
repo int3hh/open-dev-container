@@ -133,21 +133,17 @@ ssh-keygen -A >/dev/null 2>&1 || true
 
 cat > ${shellQuote(CONTAINER_FORCE_COMMAND_SCRIPT)} <<'EOF'
 #!/bin/sh
-set -eu
-
+# Run the requested command (or a login shell) and exit with its status.
+# The channel must close when the command ends: Remote SSH clients such as
+# open-remote-ssh wait for exec() to close before continuing, so keeping the
+# session alive here would hang the connection forever.
 if [ -n "\${SSH_ORIGINAL_COMMAND:-}" ]; then
-  sh -lc "$SSH_ORIGINAL_COMMAND" || true
-else
-  if command -v bash >/dev/null 2>&1; then
-    bash -l || true
-  else
-    /bin/sh || true
-  fi
+  exec sh -lc "$SSH_ORIGINAL_COMMAND"
 fi
-
-while :; do
-  sleep 3600
-done
+if command -v bash >/dev/null 2>&1; then
+  exec bash -l
+fi
+exec /bin/sh -l
 EOF
 chmod 755 ${shellQuote(CONTAINER_FORCE_COMMAND_SCRIPT)}
 
