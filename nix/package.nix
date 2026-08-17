@@ -47,8 +47,11 @@ in
 vscode-utils.buildVscodeExtension {
   pname = name;
   inherit version;
-  src = compiled;
-  sourceRoot = "${compiled}/extension";
+  # Hand over the sub-directory, not the whole output: stdenv copies a
+  # directory src into the sandbox as ./extension (buildVscodeExtension's
+  # default sourceRoot) and chmods the copy. Pointing sourceRoot at the store
+  # path directly fails on a real NixOS store (read-only).
+  src = "${compiled}/extension";
 
   vscodeExtPublisher = publisher;
   vscodeExtName = name;
