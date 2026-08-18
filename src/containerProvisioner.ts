@@ -137,13 +137,14 @@ cat > ${shellQuote(CONTAINER_FORCE_COMMAND_SCRIPT)} <<'EOF'
 # The channel must close when the command ends: Remote SSH clients such as
 # open-remote-ssh wait for exec() to close before continuing, so keeping the
 # session alive here would hang the connection forever.
+# Commands run exactly like stock sshd does it: "$SHELL -c", *not* a login
+# shell. Login startup files (/etc/profile, ~/.profile) often print banners
+# or exec an interactive shell, which breaks Remote SSH's install script.
 if [ -n "\${SSH_ORIGINAL_COMMAND:-}" ]; then
-  exec sh -lc "$SSH_ORIGINAL_COMMAND"
+  exec "\${SHELL:-/bin/sh}" -c "$SSH_ORIGINAL_COMMAND"
 fi
-if command -v bash >/dev/null 2>&1; then
-  exec bash -l
-fi
-exec /bin/sh -l
+# Interactive session: login shell.
+exec "\${SHELL:-/bin/sh}" -l
 EOF
 chmod 755 ${shellQuote(CONTAINER_FORCE_COMMAND_SCRIPT)}
 

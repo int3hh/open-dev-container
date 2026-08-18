@@ -206,5 +206,6 @@ test('buildPrepareSshdScript force command exits with the command instead of lin
   // open-remote-ssh resolves exec() only when the channel closes; a lingering
   // session (the old `while :; do sleep 3600; done`) hangs the connection.
   assert.doesNotMatch(forceCommand, /sleep 3600/);
-  assert.match(forceCommand, /exec sh -lc "\$SSH_ORIGINAL_COMMAND"/);
+  assert.match(forceCommand, /exec "\$\{SHELL:-\/bin\/sh\}" -c "\$SSH_ORIGINAL_COMMAND"/);
+  assert.doesNotMatch(forceCommand, /-lc/);
 });
