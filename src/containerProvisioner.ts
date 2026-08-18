@@ -141,7 +141,17 @@ cat > ${shellQuote(CONTAINER_FORCE_COMMAND_SCRIPT)} <<'EOF'
 # shell. Login startup files (/etc/profile, ~/.profile) often print banners
 # or exec an interactive shell, which breaks Remote SSH's install script.
 if [ -n "\${SSH_ORIGINAL_COMMAND:-}" ]; then
-  exec "\${SHELL:-/bin/sh}" -c "$SSH_ORIGINAL_COMMAND"
+  CMD=$SSH_ORIGINAL_COMMAND
+  # open-remote-ssh installs the VSCodium server with "... | bash -l". A *login*
+  # shell sources the container's profile/rc files; in hand-built images those
+  # frequently read stdin or exit for non-interactive shells, which swallows the
+  # piped install script -> the client fails with "Failed parsing install script
+  # output". The install needs no login environment, so strip the login shell.
+  case "$CMD" in
+    *"| bash -l")      CMD="\${CMD%| bash -l}| bash" ;;
+    *"| bash --login") CMD="\${CMD%| bash --login}| bash" ;;
+  esac
+  exec "\${SHELL:-/bin/sh}" -c "$CMD"
 fi
 # Interactive session: login shell.
 exec "\${SHELL:-/bin/sh}" -l

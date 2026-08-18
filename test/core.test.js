@@ -206,6 +206,9 @@ test('buildPrepareSshdScript force command exits with the command instead of lin
   // open-remote-ssh resolves exec() only when the channel closes; a lingering
   // session (the old `while :; do sleep 3600; done`) hangs the connection.
   assert.doesNotMatch(forceCommand, /sleep 3600/);
-  assert.match(forceCommand, /exec "\$\{SHELL:-\/bin\/sh\}" -c "\$SSH_ORIGINAL_COMMAND"/);
+  assert.match(forceCommand, /exec "\$\{SHELL:-\/bin\/sh\}" -c "\$CMD"/);
   assert.doesNotMatch(forceCommand, /-lc/);
+  // Strips the login shell from open-remote-ssh's "... | bash -l" server install
+  // so hostile container profile/rc files cannot swallow the piped script.
+  assert.match(forceCommand, /\| bash -l"\)\s+CMD="\$\{CMD%\| bash -l\}\| bash"/);
 });
